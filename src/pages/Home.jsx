@@ -5,10 +5,14 @@ const Home = () => {
 
     const [todo, setTodo] = useState("")
     const [todos, setTodos] = useState([]);
+    const [isMobile, setIsMobile] = useState(false);
+
     useEffect(() => {
-        console.log(todos);
-    }, [todos]);
-    const todoStyle = "bg-slate-400 text-gray-900 w-4/5 p-2 sm:p-4 rounded-xl font-roboto text-lg"
+        const userAgent = navigator.userAgent || window.opera;
+        setIsMobile(/android|iphone|ipad|mobile/i.test(userAgent));
+    }, []);
+
+    const todoStyle = "bg-slate-400 text-gray-900 w-4/5 p-2 sm:p-4 rounded-xl font-roboto text-lg whitespace-pre-wrap"
     const handleAdd = () => {
         if (todo !== "") {
             setTodos([...todos, { id: uuidv4(), todo, isCompleted: false }]);
@@ -20,10 +24,13 @@ const Home = () => {
 
     }
 
-    const handleDelete = () => {
-
-
-
+    const handleDelete = (e, id) => {
+        if (confirm("Are you sure?")) {
+            let newTodos = todos.filter(item => {
+                return item.id !== id;
+            });
+            setTodos(newTodos)
+        }
     }
 
     const handleChange = (e) => {
@@ -40,8 +47,13 @@ const Home = () => {
         console.log(id, index, newTodos);
         newTodos[index].isCompleted = !newTodos[index].isCompleted;
         setTodos(newTodos);
+    }
 
-
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleAdd();
+        }
     }
 
 
@@ -54,9 +66,10 @@ const Home = () => {
                 <div className="flex gap-2">
                     <textarea
                         onChange={handleChange}
+                        onKeyDown={!isMobile ? handleKeyDown : null}
                         value={todo}
-                        className=" w-3/4 rounded-lg resize-none " >
-
+                        className=" w-3/4 rounded-lg resize-none  "
+                    >
                     </textarea>
 
                     <button onClick={handleAdd}
@@ -70,31 +83,51 @@ const Home = () => {
                 todos.length > 0 ?
                     ("todos flex flex-col items-center bg-slate-500 rounded-xl mt-4 px-2 py-8")
                     :
-                    ""
-            }>
-                {todos.map(item => {
-                    return <div key={item.id}
-                        className="todo w-[95%] flex flex-col sm:flex-row gap-4 sm:gap-0  items-center justify-center p-2 my-2 border-solid  border-gray-400 border-b-2  ">
-                        <div className="flex justify-center gap-4 w-full">
-                            <input
-                                className="sm:mr-2 "
-                                name={item.id}
-                                type="checkbox"
-                                value={item.isCompleted}
-                                onChange={handleCheckbox}
-                            />
-                            <div className={!(item.isCompleted) ? todoStyle : todoStyle + " line-through"}>
-                                {item.todo}
+                    "min-h-[40vh] sm:min-h-[50vh] flex justify-center items-center "
+            }
+            >
+                {
+                    todos.length > 0 ?
+                        todos.map(item => {
+                            return <div key={item.id}
+                                className="todo w-[95%] flex flex-col sm:flex-row gap-4 sm:gap-0  items-center justify-center p-2 my-2 border-solid  border-gray-400 border-b-2  ">
+                                <span className="text-lg font-oxanium  ">{todos.indexOf(item) + 1}.</span>
+                                <div className="flex justify-center gap-6 w-full">
+                                    <div
+                                        className={!(item.isCompleted) ?
+                                            todoStyle
+                                            :
+                                            todoStyle + " line-through"
+                                        }
+                                    >
+                                        {item.todo}
+                                    </div>
+                                    <input
+                                        className="sm:ml-2 scale-[2] sm:scale-[2.5] "
+                                        name={item.id}
+                                        type="checkbox"
+                                        value={item.isCompleted}
+                                        onChange={handleCheckbox}
+                                    />
+                                </div>
+                                <div className="buttons flex">
+                                    <button onClick={handleEdit} className="bg-gray-700  ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Edit</button>
+                                    <button
+                                        onClick={(e) => {
+                                            handleDelete(e, item.id)
+                                        }
+                                        }
+                                        className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Delete</button>
+                                </div>
                             </div>
-                        </div>
-                        <div className="buttons flex">
-                            <button onClick={handleEdit} className="bg-gray-700  ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Edit</button>
-                            <button
-                                onClick={handleDelete}
-                                className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Delete</button>
-                        </div>
-                    </div>
-                })}
+                        }
+                        )
+                        :
+                        <h2
+                            className="text-gray-200 text-5xl font-oxanium font-bold"
+                        >No ToDos
+                        </h2>
+                }
             </div>
         </div>
     )
