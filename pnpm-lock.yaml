@@ -14,6 +14,9 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      uuid:
+        specifier: ^11.0.2
+        version: 11.0.2
     devDependencies:
       '@eslint/js':
         specifier: ^9.13.0
@@ -1526,6 +1529,10 @@ packages:
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  uuid@11.0.2:
+    resolution: {integrity: sha512-14FfcOJmqdjbBPdDjFQyk/SdT4NySW4eM0zcG+HqbHP5jzuH56xO3J1DGhgs/cEMCfwYi3HQI1gnTO62iaG+tQ==}
+    hasBin: true
 
   vite@5.4.10:
     resolution: {integrity: sha512-1hvaPshuPUtxeQ0hsVH3Mud0ZanOLwVTneA1EgbAM5LhaZEqyPWGRQ7BtaMvUrTDeEaC8pxtj6a6jku3x4z6SQ==}
@@ -3223,6 +3230,8 @@ snapshots:
       punycode: 2.3.1
 
   util-deprecate@1.0.2: {}
+
+  uuid@11.0.2: {}
 
   vite@5.4.10:
     dependencies:
