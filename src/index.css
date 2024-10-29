@@ -2,5 +2,4 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wdth,wght@0,75..100,300..800;1,75..100,300..800&family=Oxanium:wght@200..800&family=Roboto+Slab:wght@100..900&display=swap");

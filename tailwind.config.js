@@ -2,8 +2,14 @@
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    fontFamily: {},
-    extend: {},
+    extend: {
+      fontFamily: {
+        noto: ["Noto Sans", "serif"],
+        open: ["Open Sans", "serif"],
+        oxanium: ["Oxanium", "serif"],
+        roboto: ["Roboto Slab", "serif"],
+      },
+    },
   },
   plugins: [],
 };

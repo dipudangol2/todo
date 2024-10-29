@@ -8,7 +8,7 @@ const Home = () => {
     useEffect(() => {
         console.log(todos);
     }, [todos]);
-    const todoStyle = "bg-slate-500 w-4/5 p-3 rounded-xl"
+    const todoStyle = "bg-slate-400 text-gray-900 w-4/5 p-2 sm:p-4 rounded-xl font-roboto text-lg"
     const handleAdd = () => {
         if (todo !== "") {
             setTodos([...todos, { id: uuidv4(), todo, isCompleted: false }]);
@@ -19,13 +19,10 @@ const Home = () => {
     const handleEdit = () => {
 
     }
-    /*************  ✨ Codeium Command ⭐  *************/
-    /**
-     * Deletes a todo item from the list based on a specific condition.
-     * This function should be called when a delete action is triggered.
-     */
-    /******  8963cdc4-0bad-4168-a8de-427b8c597076  *******/
+
     const handleDelete = () => {
+
+
 
     }
 
@@ -51,32 +48,50 @@ const Home = () => {
 
 
     return (
-        <div className="flex flex-col container mx-auto my-5 rounded-xl bg-slate-600 p-5 min-h-[80vh]">
+        <div className="flex flex-col container mx-auto my-5 rounded-xl bg-gray-800 p-5 min-h-[80vh]">
             <div className="addTodo flex justify-between flex-col gap-2 my-3">
-                <h2 className="text-lg font-bold">Add a ToDo</h2>
+                <h2 className="text-xl text-gray-200 font-roboto font-bold">Add a ToDo</h2>
                 <div className="flex gap-2">
-                    <textarea onChange={handleChange} value={todo} className=" w-3/4 rounded-lg resize-none " ></textarea>
+                    <textarea
+                        onChange={handleChange}
+                        value={todo}
+                        className=" w-3/4 rounded-lg resize-none " >
 
-                    <button onClick={handleAdd} className="bg-gray-800 ml-4 transition-all duration-200 hover:bg-gray-900 font-bold p-2 px-4 rounded-2xl text-white ">Add</button>
+                    </textarea>
+
+                    <button onClick={handleAdd}
+                        className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold p-2 px-4 rounded-2xl text-white font-oxanium italic  ">
+                        Add
+                    </button>
                 </div>
             </div>
-            <h2 className="text-lg font-bold mt-4">Your ToDos</h2>
-            <div className="todos">
+            <h2 className="text-xl text-gray-200 font-roboto font-bold mt-4">Your ToDos</h2>
+            <div className={
+                todos.length > 0 ?
+                    ("todos flex flex-col items-center bg-slate-500 rounded-xl mt-4 px-2 py-8")
+                    :
+                    ""
+            }>
                 {todos.map(item => {
-                    return <div key={item.id} className="todo flex items-center justify-between p-2 my-2">
-                        <input
-                            className="mr-2"
-                            name={item.id}
-                            type="checkbox"
-                            value={item.isCompleted}
-                            onChange={handleCheckbox}
-                        />
-                        <div className={!(item.isCompleted) ? todoStyle : todoStyle + " line-through"}>
-                            {item.todo}
+                    return <div key={item.id}
+                        className="todo w-[95%] flex flex-col sm:flex-row gap-4 sm:gap-0  items-center justify-center p-2 my-2 border-solid  border-gray-400 border-b-2  ">
+                        <div className="flex justify-center gap-4 w-full">
+                            <input
+                                className="sm:mr-2 "
+                                name={item.id}
+                                type="checkbox"
+                                value={item.isCompleted}
+                                onChange={handleCheckbox}
+                            />
+                            <div className={!(item.isCompleted) ? todoStyle : todoStyle + " line-through"}>
+                                {item.todo}
+                            </div>
                         </div>
-                        <div className="buttons">
-                            <button onClick={handleEdit} className="bg-gray-800 ml-4 transition-all duration-200 hover:bg-gray-900 font-bold p-3 px-4 rounded-2xl text-white ">Edit</button>
-                            <button onClick={handleDelete} className="bg-gray-800 ml-4 transition-all duration-200 hover:bg-gray-900 font-bold p-3 px-4 rounded-2xl text-white ">Delete</button>
+                        <div className="buttons flex">
+                            <button onClick={handleEdit} className="bg-gray-700  ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Edit</button>
+                            <button
+                                onClick={handleDelete}
+                                className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Delete</button>
                         </div>
                     </div>
                 })}

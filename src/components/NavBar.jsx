@@ -1,10 +1,10 @@
 const NavBar = () => {
   return (
-    <nav className=" flex justify-between bg-slate-800 text-white py-2">
+    <nav className=" flex justify-between items-center bg-gray-800 text-white py-2 font-oxanium font-bold ">
       <div className="logo">
-        <span className="font-bold text-xl mx-9">ToDo</span>
+        <span className="font-bold text-3xl mx-9">ToDo</span>
       </div>
-      <ul className="flex gap-8 mx-9">
+      <ul className="flex gap-8 mx-9 p-4 text-lg">
         <li className="cursor-pointer hover:font-bold transition-all-duration-75">Home</li>
         <li className="cursor-pointer hover:font-bold transition-all duration-75">Tasks</li>
       </ul>
