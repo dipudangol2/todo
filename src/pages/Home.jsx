@@ -1,11 +1,43 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 const Home = () => {
 
     const [todo, setTodo] = useState("")
-    const [todos, setTodos] = useState([]);
+    const [todos, setTodos] = useState(() => {
+        const storedTodos = localStorage.getItem("todos");
+        return storedTodos ? JSON.parse(storedTodos) : [];
+    });
     const [isMobile, setIsMobile] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const isInitialLoad = useRef(false);
+
+    useEffect(() => {
+        const todosString = localStorage.getItem("todos");
+        if (todosString) {
+            let storedTodos = JSON.parse(todosString);
+            setTodos(storedTodos);
+        }
+
+    }, []);
+
+
+    useEffect(() => {
+        /* Skips the save if the page is rendered for the first time */
+        if (isInitialLoad.current) {
+            isInitialLoad.current = false;
+            return;
+        }
+        try {
+            localStorage.setItem("todos", JSON.stringify(todos));
+        }
+        catch (e) {
+            alert("Local storage is not working:", e);
+        }
+
+    }, [todos]);
+
+
 
     useEffect(() => {
         const userAgent = navigator.userAgent || window.opera;
@@ -13,24 +45,33 @@ const Home = () => {
     }, []);
 
     const todoStyle = "bg-slate-400 text-gray-900 w-4/5 p-2 sm:p-4 rounded-xl font-roboto text-lg whitespace-pre-wrap"
-    const handleAdd = () => {
+    const handleSave = () => {
         if (todo !== "") {
             setTodos([...todos, { id: uuidv4(), todo, isCompleted: false }]);
             setTodo("");
-            console.log(todos);
         }
+
     }
-    const handleEdit = () => {
+    const handleEdit = (e, id) => {
+        let t = todos.filter(i => i.id === id);
+        setTodo(t[0].todo);
+        setIsEditing(true);
+        handleDelete(e, id, true);
+
+
 
     }
 
-    const handleDelete = (e, id) => {
-        if (confirm("Are you sure?")) {
+    const handleDelete = (e, id, isfromEdit = false) => {
+
+        if (isfromEdit || confirm("Are you sure?")) {
             let newTodos = todos.filter(item => {
                 return item.id !== id;
             });
             setTodos(newTodos)
         }
+        setIsEditing(false);
+
     }
 
     const handleChange = (e) => {
@@ -47,12 +88,13 @@ const Home = () => {
         console.log(id, index, newTodos);
         newTodos[index].isCompleted = !newTodos[index].isCompleted;
         setTodos(newTodos);
+
     }
 
     const handleKeyDown = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
-            handleAdd();
+            handleSave();
         }
     }
 
@@ -72,9 +114,9 @@ const Home = () => {
                     >
                     </textarea>
 
-                    <button onClick={handleAdd}
+                    <button onClick={handleSave}
                         className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold p-2 px-4 rounded-2xl text-white font-oxanium italic  ">
-                        Add
+                        Save
                     </button>
                 </div>
             </div>
@@ -90,28 +132,35 @@ const Home = () => {
                     todos.length > 0 ?
                         todos.map(item => {
                             return <div key={item.id}
-                                className="todo w-[95%] flex flex-col sm:flex-row gap-4 sm:gap-0  items-center justify-center p-2 my-2 border-solid  border-gray-400 border-b-2  ">
-                                <span className="text-lg font-oxanium  ">{todos.indexOf(item) + 1}.</span>
-                                <div className="flex justify-center gap-6 w-full">
-                                    <div
-                                        className={!(item.isCompleted) ?
-                                            todoStyle
-                                            :
-                                            todoStyle + " line-through"
-                                        }
-                                    >
-                                        {item.todo}
+                                className="todo w-[95%] flex flex-col  sm:flex-row gap-4 sm:gap-0  items-center justify-center p-2 my-2 border-solid  border-gray-400 border-b-2  ">
+                                <div className="flex w-full  ">
+                                    <span className="text-lg font-oxanium  ">{todos.indexOf(item) + 1}.</span>
+                                    <div className="flex justify-center gap-6 w-full">
+                                        <div
+                                            className={!(item.isCompleted) ?
+                                                todoStyle
+                                                :
+                                                todoStyle + " line-through"
+                                            }
+                                        >
+                                            {item.todo}
+                                        </div>
+                                        <input
+                                            className="sm:ml-2 scale-[2] sm:scale-[2.5] "
+                                            name={item.id}
+                                            type="checkbox"
+                                            value={item.isCompleted}
+                                            onChange={handleCheckbox}
+                                        />
                                     </div>
-                                    <input
-                                        className="sm:ml-2 scale-[2] sm:scale-[2.5] "
-                                        name={item.id}
-                                        type="checkbox"
-                                        value={item.isCompleted}
-                                        onChange={handleCheckbox}
-                                    />
                                 </div>
+
                                 <div className="buttons flex">
-                                    <button onClick={handleEdit} className="bg-gray-700  ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Edit</button>
+                                    <button
+                                        onClick={
+                                            (e) => handleEdit(e, item.id)
+                                        }
+                                        className="bg-gray-700  ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Edit</button>
                                     <button
                                         onClick={(e) => {
                                             handleDelete(e, item.id)
@@ -125,7 +174,7 @@ const Home = () => {
                         :
                         <h2
                             className="text-gray-200 text-5xl font-oxanium font-bold"
-                        >No ToDos
+                        >No ToDos to display!
                         </h2>
                 }
             </div>
