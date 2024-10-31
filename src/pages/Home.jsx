@@ -11,14 +11,12 @@ const Home = () => {
     const [isMobile, setIsMobile] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const isInitialLoad = useRef(false);
+    const [showFinished, setshowFinished] = useState(false);
+
 
     useEffect(() => {
-        const todosString = localStorage.getItem("todos");
-        if (todosString) {
-            let storedTodos = JSON.parse(todosString);
-            setTodos(storedTodos);
-        }
-
+        const userAgent = navigator.userAgent || window.opera;
+        setIsMobile(/android|iphone|ipad|mobile/i.test(userAgent));
     }, []);
 
 
@@ -37,19 +35,26 @@ const Home = () => {
 
     }, [todos]);
 
-
-
     useEffect(() => {
-        const userAgent = navigator.userAgent || window.opera;
-        setIsMobile(/android|iphone|ipad|mobile/i.test(userAgent));
+        const todosString = localStorage.getItem("todos");
+        if (todosString) {
+            let storedTodos = JSON.parse(todosString);
+            setTodos(storedTodos);
+        }
+
     }, []);
+
+
+    const toggleFinished = () => {
+
+    }
+
+
 
     const todoStyle = "bg-slate-400 text-gray-900 w-4/5 p-2 sm:p-4 rounded-xl font-roboto text-lg whitespace-pre-wrap"
     const handleSave = () => {
-        if (todo !== "") {
-            setTodos([...todos, { id: uuidv4(), todo, isCompleted: false }]);
-            setTodo("");
-        }
+        setTodos([...todos, { id: uuidv4(), todo, isCompleted: false }]);
+        setTodo("");
 
     }
     const handleEdit = (e, id) => {
@@ -81,13 +86,10 @@ const Home = () => {
 
     const handleCheckbox = (e) => {
         let id = e.target.name;
-        let index = todos.findIndex(item => {
-            return item.id === id;
-        })
-        let newTodos = [...todos];
-        console.log(id, index, newTodos);
-        newTodos[index].isCompleted = !newTodos[index].isCompleted;
-        setTodos(newTodos);
+        const updatedTodos = todos.map((item) =>
+            item.id === id ? { ...item, isCompleted: !item.isCompleted } : item
+        );
+        setTodos(updatedTodos);
 
     }
 
@@ -114,13 +116,24 @@ const Home = () => {
                     >
                     </textarea>
 
-                    <button onClick={handleSave}
-                        className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold p-2 px-4 rounded-2xl text-white font-oxanium italic  ">
+                    <button
+                        disabled={todo.length <= 3}
+                        onClick={handleSave}
+                        className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600 disabled:bg-gray-500 font-bold p-2 px-4 rounded-2xl text-white font-oxanium italic "
+
+                    >
                         Save
                     </button>
                 </div>
             </div>
             <h2 className="text-xl text-gray-200 font-roboto font-bold mt-4">Your ToDos</h2>
+            <div className="w-full flex flex-row  items-center gap-4 mt-4">
+                <span className="text-white text-xl font-roboto ">Show finished tasks</span>
+                <input
+                    className=" scale-[1.5] sm:scale-[2] transition-none "
+                    type="checkbox"
+                />
+            </div>
             <div className={
                 todos.length > 0 ?
                     ("todos flex flex-col items-center bg-slate-500 rounded-xl mt-4 px-2 py-8")
@@ -149,7 +162,7 @@ const Home = () => {
                                             className="sm:ml-2 scale-[2] sm:scale-[2.5] "
                                             name={item.id}
                                             type="checkbox"
-                                            value={item.isCompleted}
+                                            checked={item.isCompleted}
                                             onChange={handleCheckbox}
                                         />
                                     </div>
