@@ -9,8 +9,8 @@ const Home = () => {
         return storedTodos ? JSON.parse(storedTodos) : [];
     });
     const [isMobile, setIsMobile] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
     const isInitialLoad = useRef(false);
+    const [editingId, setEditingId] = useState(null);
     const [showFinished, setshowFinished] = useState(false);
 
 
@@ -44,38 +44,44 @@ const Home = () => {
 
     }, []);
 
-
-    const toggleFinished = () => {
-
-    }
-
-
-
+    /* 
+        const toggleFinished = () => {
+    
+        }
+    
+    
+     */
     const todoStyle = "bg-slate-400 text-gray-900 w-4/5 p-2 sm:p-4 rounded-xl font-roboto text-lg whitespace-pre-wrap"
     const handleSave = () => {
-        setTodos([...todos, { id: uuidv4(), todo, isCompleted: false }]);
-        setTodo("");
+
+        if (todo.trim() === "") { return; }
+        if (editingId) {
+            setTodos(todos.map((item) => item.id === editingId ? { ...item, todo } : item));
+            setEditingId(null);
+            setTodo("")
+        }
+        else {
+
+            setTodos([...todos, { id: uuidv4(), todo, isCompleted: false }]);
+            setTodo("");
+        }
 
     }
     const handleEdit = (e, id) => {
+        setEditingId(id);
         let t = todos.filter(i => i.id === id);
         setTodo(t[0].todo);
-        setIsEditing(true);
-        handleDelete(e, id, true);
-
-
 
     }
 
-    const handleDelete = (e, id, isfromEdit = false) => {
+    const handleDelete = (e, id) => {
 
-        if (isfromEdit || confirm("Are you sure?")) {
+        if (confirm("Are you sure?")) {
             let newTodos = todos.filter(item => {
                 return item.id !== id;
             });
             setTodos(newTodos)
         }
-        setIsEditing(false);
 
     }
 
