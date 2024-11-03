@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { FaEdit, FaTrash, FaSave } from "react-icons/fa";
 import { v4 as uuidv4 } from "uuid";
 
 const Home = () => {
@@ -123,22 +124,21 @@ const Home = () => {
         <div className="flex flex-col container mx-auto my-5 rounded-xl bg-gray-800 p-5 min-h-[80vh]">
             <div className="addTodo flex justify-between flex-col gap-2 my-3">
                 <h2 className="text-xl text-gray-200 font-roboto font-bold">Add a ToDo</h2>
-                <div className="flex gap-2">
+                <div className="flex gap-3 flex-col ">
                     <textarea
                         onChange={handleChange}
                         onKeyDown={!isMobile ? handleKeyDown : null}
                         value={todo}
-                        className=" w-3/4 rounded-lg resize-none  "
+                        className="rounded-lg resize-none  "
                     >
                     </textarea>
 
                     <button
-
                         onClick={handleSave}
-                        className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold p-2 px-4 rounded-2xl text-white font-oxanium italic "
+                        className="bg-gray-700 flex justify-center transition-all duration-200 hover:bg-gray-600  font-bold p-2 rounded-xl text-white font-oxanium italic text-2xl sm:text-3xl "
 
                     >
-                        Save
+                        <FaSave />
                     </button>
                 </div>
             </div>
@@ -154,58 +154,18 @@ const Home = () => {
             </div>
             <button
                 onClick={deleteCompleted}
-                className="w-1/4 bg-gray-300  mt-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2  rounded-2xl text-black font-oxanium italic ">Delete completed</button>
+                className="w-2/4 sm:w-1/4 bg-gray-300  mt-4 transition-all duration-200 hover:bg-gray-600  font-bold p-2 rounded-2xl text-black font-oxanium italic text-md sm:text-lg">Delete completed</button>
             <div className={
-                todos.length === 0 || (showFinished && todos.filter(item => item.isCompleted).length === 0) ?
-                    "min-h-[40vh] sm:min-h-[50vh] flex justify-center items-center "
-                    :
+                todos.length > 0 ?
                     ("todos flex flex-col items-center bg-slate-500 rounded-xl mt-4 px-2 py-8")
+                    :
+                    "min-h-[40vh] sm:min-h-[50vh] flex justify-center items-center "
 
             }
             >
                 {
                     todos.length > 0 ?
                         showFinished ?
-                            todos.filter(item => item.isCompleted).length === 0 ? <h2 className="text-gray-200 text-5xl font-oxanium font-bold">No Completed Todos!</h2> : todos.map(item => {
-                                return (item.isCompleted) && <div key={item.id}
-                                    className="todo w-[95%] flex flex-col  sm:flex-row gap-4 sm:gap-0  items-center justify-center p-2 my-2 border-solid  border-gray-400 border-b-2  ">
-                                    <div className="flex w-full items-center ">
-                                        <span className="text-xl font-oxanium  ">{todos.indexOf(item) + 1}.</span>
-                                        <div className="flex justify-center gap-6 w-full">
-                                            <div
-                                                className={!(item.isCompleted) ?
-                                                    todoStyle
-                                                    :
-                                                    todoStyle + " line-through"
-                                                }
-                                            >
-                                                {item.todo}
-                                            </div>
-                                            <input
-                                                className="sm:ml-2 scale-[2] sm:scale-[2.5] "
-                                                name={item.id}
-                                                type="checkbox"
-                                                checked={item.isCompleted}
-                                                onChange={handleCheckbox}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="buttons flex">
-                                        <button
-                                            onClick={
-                                                (e) => handleEdit(e, item.id)
-                                            }
-                                            className="bg-gray-700  ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Edit</button>
-                                        <button
-                                            onClick={(e) => {
-                                                handleDelete(e, item.id)
-                                            }
-                                            }
-                                            className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Delete</button>
-                                    </div>
-                                </div>
-                            }) :
                             todos.map(item => {
                                 return <div key={item.id}
                                     className="todo w-[95%] flex flex-col  sm:flex-row gap-4 sm:gap-0  items-center justify-center p-2 my-2 border-solid  border-gray-400 border-b-2  ">
@@ -236,20 +196,62 @@ const Home = () => {
                                             onClick={
                                                 (e) => handleEdit(e, item.id)
                                             }
-                                            className="bg-gray-700  ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Edit</button>
+                                            className="bg-gray-700  ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-4  rounded-2xl text-white font-oxanium italic text-md sm:text-lg "> <FaEdit /></button>
                                         <button
                                             onClick={(e) => {
                                                 handleDelete(e, item.id)
                                             }
                                             }
-                                            className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Delete</button>
+                                            className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-4  rounded-2xl text-white font-oxanium italic text-md sm:text-lg "><FaTrash /></button>
+                                    </div>
+                                </div>
+                            })
+
+                            :
+                            todos.map(item => {
+                                return (!item.isCompleted) && <div key={item.id}
+                                    className="todo w-[95%] flex flex-col  sm:flex-row gap-4 sm:gap-0  items-center justify-center p-2 my-2 border-solid  border-gray-400 border-b-2  ">
+                                    <div className="flex w-full items-center ">
+                                        <span className="text-xl font-oxanium  ">{todos.indexOf(item) + 1}.</span>
+                                        <div className="flex justify-center gap-6 w-full">
+                                            <div
+                                                className={!(item.isCompleted) ?
+                                                    todoStyle
+                                                    :
+                                                    todoStyle + " line-through"
+                                                }
+                                            >
+                                                {item.todo}
+                                            </div>
+                                            <input
+                                                className="sm:ml-2 scale-[2] sm:scale-[2.5] "
+                                                name={item.id}
+                                                type="checkbox"
+                                                checked={item.isCompleted}
+                                                onChange={handleCheckbox}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="buttons flex">
+                                        <button
+                                            onClick={
+                                                (e) => handleEdit(e, item.id)
+                                            }
+                                            className="bg-gray-700  ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-4  rounded-2xl text-white font-oxanium italic text-md sm:text-lg "><FaEdit /></button>
+                                        <button
+                                            onClick={(e) => {
+                                                handleDelete(e, item.id)
+                                            }
+                                            }
+                                            className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-4  rounded-2xl text-white font-oxanium italic text-md sm:text-lg "><FaTrash /></button>
                                     </div>
                                 </div>
                             })
 
                         :
                         <h2
-                            className="text-gray-200 text-5xl font-oxanium font-bold"
+                            className="text-gray-200 text-2xl sm:text-5xl font-oxanium font-bold"
                         >No ToDos to display!
                         </h2>
                 }
