@@ -111,6 +111,13 @@ const Home = () => {
         }
     }
 
+    const deleteCompleted = () => {
+        if (todos.filter(item => item.isCompleted).length > 0 && confirm("Are you sure? The todos cannot be recoverd.")) {
+            const newTodos = todos.filter(item => !item.isCompleted);
+            setTodos(newTodos);
+        }
+    }
+
 
     return (
         <div className="flex flex-col container mx-auto my-5 rounded-xl bg-gray-800 p-5 min-h-[80vh]">
@@ -144,57 +151,61 @@ const Home = () => {
                     onChange={toggleFinished}
                 />
 
-
             </div>
+            <button
+                onClick={deleteCompleted}
+                className="w-1/4 bg-gray-300  mt-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2  rounded-2xl text-black font-oxanium italic ">Delete completed</button>
             <div className={
-                todos.length > 0 ?
-                    ("todos flex flex-col items-center bg-slate-500 rounded-xl mt-4 px-2 py-8")
-                    :
+                todos.length === 0 || (showFinished && todos.filter(item => item.isCompleted).length === 0) ?
                     "min-h-[40vh] sm:min-h-[50vh] flex justify-center items-center "
+                    :
+                    ("todos flex flex-col items-center bg-slate-500 rounded-xl mt-4 px-2 py-8")
+
             }
             >
                 {
                     todos.length > 0 ?
-                        showFinished ? todos.map(item => {
-                            return (item.isCompleted) && <div key={item.id}
-                                className="todo w-[95%] flex flex-col  sm:flex-row gap-4 sm:gap-0  items-center justify-center p-2 my-2 border-solid  border-gray-400 border-b-2  ">
-                                <div className="flex w-full items-center ">
-                                    <span className="text-xl font-oxanium  ">{todos.indexOf(item) + 1}.</span>
-                                    <div className="flex justify-center gap-6 w-full">
-                                        <div
-                                            className={!(item.isCompleted) ?
-                                                todoStyle
-                                                :
-                                                todoStyle + " line-through"
-                                            }
-                                        >
-                                            {item.todo}
+                        showFinished ?
+                            todos.filter(item => item.isCompleted).length === 0 ? <h2 className="text-gray-200 text-5xl font-oxanium font-bold">No Completed Todos!</h2> : todos.map(item => {
+                                return (item.isCompleted) && <div key={item.id}
+                                    className="todo w-[95%] flex flex-col  sm:flex-row gap-4 sm:gap-0  items-center justify-center p-2 my-2 border-solid  border-gray-400 border-b-2  ">
+                                    <div className="flex w-full items-center ">
+                                        <span className="text-xl font-oxanium  ">{todos.indexOf(item) + 1}.</span>
+                                        <div className="flex justify-center gap-6 w-full">
+                                            <div
+                                                className={!(item.isCompleted) ?
+                                                    todoStyle
+                                                    :
+                                                    todoStyle + " line-through"
+                                                }
+                                            >
+                                                {item.todo}
+                                            </div>
+                                            <input
+                                                className="sm:ml-2 scale-[2] sm:scale-[2.5] "
+                                                name={item.id}
+                                                type="checkbox"
+                                                checked={item.isCompleted}
+                                                onChange={handleCheckbox}
+                                            />
                                         </div>
-                                        <input
-                                            className="sm:ml-2 scale-[2] sm:scale-[2.5] "
-                                            name={item.id}
-                                            type="checkbox"
-                                            checked={item.isCompleted}
-                                            onChange={handleCheckbox}
-                                        />
+                                    </div>
+
+                                    <div className="buttons flex">
+                                        <button
+                                            onClick={
+                                                (e) => handleEdit(e, item.id)
+                                            }
+                                            className="bg-gray-700  ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Edit</button>
+                                        <button
+                                            onClick={(e) => {
+                                                handleDelete(e, item.id)
+                                            }
+                                            }
+                                            className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Delete</button>
                                     </div>
                                 </div>
-
-                                <div className="buttons flex">
-                                    <button
-                                        onClick={
-                                            (e) => handleEdit(e, item.id)
-                                        }
-                                        className="bg-gray-700  ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Edit</button>
-                                    <button
-                                        onClick={(e) => {
-                                            handleDelete(e, item.id)
-                                        }
-                                        }
-                                        className="bg-gray-700 ml-4 transition-all duration-200 hover:bg-gray-600  font-bold  p-2 sm:p-4 rounded-2xl text-white font-oxanium italic ">Delete</button>
-                                </div>
-                            </div>
-                        }) :
+                            }) :
                             todos.map(item => {
                                 return <div key={item.id}
                                     className="todo w-[95%] flex flex-col  sm:flex-row gap-4 sm:gap-0  items-center justify-center p-2 my-2 border-solid  border-gray-400 border-b-2  ">
